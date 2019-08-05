@@ -38,6 +38,53 @@ RUN mkdir -p -m 0600 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
 
 RUN git clone https://github.com/The-OpenROAD-Project/FastRoute4-lefdef.git
 
+# Build dependencies
+#
+# TODO once the duplicate source code and .a files are removed from the FastRoute4-lefdef
+# git repository, we can remove the line below.
+RUN rm -rf FastRoute4-lefdef/third_party/rsyn/lib && \
+    rm -rf FastRoute4-lefdef/third_party/rsyn/include/lef && \
+    rm -rf FastRoute4-lefdef/third_party/rsyn/include/def
+
+# TODO update FastRoute4-lefdef, so that it can use the latest flute git repository
+# RUN rm -rf FastRoute4-lefdef/third_party/rsyn/include/flute
+
+RUN mkdir -p FastRoute4-lefdef/third_party/rsyn/lib/linux
+
+# TODO we should be using the flute git repository
+# RUN git clone https://github.com/The-OpenROAD-Project/flute.git
+RUN cd FastRoute4-lefdef/third_party/rsyn/include/flute && \
+    cmake -DCMAKE_BUILD_TYPE=Release . && \
+    make && \
+    cp libflute.a ../../lib/linux
+
+RUN cd FastRoute4-lefdef/third_party/rsyn/include/liberty && \
+    cmake -DCMAKE_BUILD_TYPE=Release . && \
+    make && \
+    cp libliberty.a ../../lib/linux
+
+RUN git clone https://github.com/The-OpenROAD-Project/lef.git
+
+RUN cd lef && \
+    cmake -DCMAKE_BUILD_TYPE=Release . && \
+    make && \
+    cp lib/liblef.a ../FastRoute4-lefdef/third_party/rsyn/lib/linux
+
+RUN git clone https://github.com/The-OpenROAD-Project/def.git
+
+RUN cd def && \
+    cmake -DCMAKE_BUILD_TYPE=Release . && \
+    make && \
+    cp lib/libdef.a ../FastRoute4-lefdef/third_party/rsyn/lib/linux
+
+
+RUN cp -ra def/def FastRoute4-lefdef/third_party/rsyn/include/
+RUN cp -ra lef/lef FastRoute4-lefdef/third_party/rsyn/include/
+
+# TODO shouldn't FastRoute4-lefdef use the flute git repository?
+# RUN cp -ra flute FastRoute4-lefdef/third_party/rsyn/include/
+
+# The dependencies are built, time to build FastRoute4-lefdef itself.
 RUN mkdir /FastRoute4-lefdef/build
 WORKDIR /FastRoute4-lefdef/build
 
