@@ -51,7 +51,8 @@ hierarchy -generate tsmc65lp_* o:Q o:QA o:QB \
                                i:DFTRAMBYP i:PGEN i:KEN i:BEN i:TQ
 
 # generic synthesis
-synth  -top $::env(DESIGN_NAME) -flatten
+synth -noshare -noalumacc -top $::env(DESIGN_NAME) 
+#-noflatten
 
 # Optimize the design
 opt -purge

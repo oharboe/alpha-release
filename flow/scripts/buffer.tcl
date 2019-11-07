@@ -355,12 +355,11 @@ puts "\nSaving verilog+sdc..."
 write_verilog $::env(RESULTS_DIR)/1_2_buffer.v
 write_sdc $::env(RESULTS_DIR)/1_synth.sdc
 
-
-
 # final report
 report_checks > $::env(REPORTS_DIR)/1_synth_checks.rpt
 report_tns > $::env(REPORTS_DIR)/1_synth_tns.rpt
 report_wns > $::env(REPORTS_DIR)/1_synth_wns.rpt
-
+report_power > $::env(REPORTS_DIR)/1_synth_power.rpt
+report_design_area > $::env(REPORTS_DIR)/1_synth_design_area.rpt
 
 exit

@@ -132,6 +132,11 @@ $(RESULTS_DIR)/1_1_yosys.v:  $(OBJECTS_DIR)/merged.lib
 	mkdir -p $(RESULTS_DIR) $(LOG_DIR) $(REPORTS_DIR)
 	yosys -l $(LOG_DIR)/1_yosys.log -c $(SYNTH_SCRIPT)
 
+resize: $(RESULTS_DIR)/1_2_buffer.v
+
+clean_resize:
+	rm -f $(RESULTS_DIR)/1_2_buffer.v
+
 $(RESULTS_DIR)/1_2_buffer.v: $(RESULTS_DIR)/1_1_yosys.v $(SDC_FILE) | ../etc/PORT9.dat ../etc/POST9.dat ../etc/POWV9.dat
 	resizer $(SCRIPTS_DIR)/buffer.tcl \
 	        2>&1 | tee $(LOG_DIR)/1_2_buffer.log
@@ -518,7 +523,7 @@ clean:
 	@echo "  clean_synth clean_floorplan clean_place clean_cts clean_route clean_finish"
 	@echo
 
-clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_finish
+clean_all: clean_synth clean_floorplan clean_place clean_cts clean_route clean_finish clean_resize
 
 nuke:
 	rm -rf ./results ./logs ./reports ./objects
